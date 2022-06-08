@@ -105,7 +105,7 @@
 	    <snapshotRepository>
 	      <id>nexus</id>
 	      <name>Mithun Technologies Snapshot Nexus Repository </name>
-	      <url>http://43.204.233.16:9980/meenamurugan/repository/nyka-snapshot/</url>
+	      <url>http://13.235.71.78:9980/meenamurugan/repository/nyka-snapshot/</url>
 	    </snapshotRepository>
 	    
 	</distributionManagement>
