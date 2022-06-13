@@ -1,4 +1,5 @@
 node{
+try{
     def MavenHome = tool name:"maven3.8.4"
     properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
     echo "Job name is : ${env.JOB_NAME}"
@@ -12,7 +13,6 @@ node{
     {
         sh "${MavenHome}/bin/mvn clean package" 
     }
-    /*
     stage('ExecuteSonarQubeReport')
     {
         sh "${MavenHome}/bin/mvn sonar:sonar"
@@ -28,5 +28,11 @@ node{
         }        
 
     }
-    */
+   }catch(e){
+   curentBuild.result="FAILED"
+   throw e
+   }
+   finally {
+   SendSlackNotification (curentBuild.result)
+   }
 }
