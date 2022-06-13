@@ -36,7 +36,7 @@ node{
    SendSlackNotification (currentBuild.result)
    }
 }
-def sendslagnotification(String buildStatus = 'STARTED') {
+def SendSlackNotification(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESSFUL'
 
