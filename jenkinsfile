@@ -29,11 +29,11 @@ try{
 
     }
    }catch(e){
-   curentBuild.result="FAILED"
+   currentBuild.result="FAILED"
    throw e
    }
    finally {
-   SendSlackNotification (curentBuild.result)
+   SendSlackNotification (currentBuild.result)
    }
 }
 def sendslagnotification(String buildStatus = 'STARTED') {
