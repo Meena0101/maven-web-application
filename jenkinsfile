@@ -5,6 +5,7 @@ node{
     echo "Node name is : ${env.NODE_NAME}"
     echo "Build number is : ${env.BUILD_NUMBER}"
    try{
+   SendSlackNotification('STARTED')
    stage('checkoutcode')
     {
         git branch: 'development', credentialsId: '08caeac2-7224-457e-ac0b-d6b4e6e81a8f', url: 'https://github.com/Meena0101/maven-web-application.git'
