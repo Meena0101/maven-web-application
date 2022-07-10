@@ -1,0 +1,32 @@
+node
+{
+    def MavenHome = tool name:"maven3.8.6"
+    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+    stage('checkoutcode')
+    {
+    git branch: 'development', credentialsId: 'fa10ee94-7171-4dd3-a74a-53316fb746fd', url: 'https://github.com/Meena0101/maven-web-application.git'
+}
+ stage ('build')
+ {
+     sh"${MavenHome}/bin/mvn clean package"
+     
+ }
+ stage ('executesonarreport')
+ {
+     sh"${MavenHome}/bin/mvn sonar:sonar"
+ }
+ stage ('upload artifactsfromnexus')
+ {
+     
+     sh"${MavenHome}/bin/mvn deploy"
+ }
+ stage ('Deploy')
+ {
+ sshagent(['d6f6b894-af19-499e-9837-408b0c185c7d']) {
+
+ sh"scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@52.66.198.164:/opt/apache-tomcat-9.0.64/webapps/"
+     }
+         
+     }
+
+}
