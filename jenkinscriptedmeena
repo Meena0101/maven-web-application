@@ -16,9 +16,9 @@ SendSlackNotification('STARTED')
      sh"${MavenHome}/bin/mvn clean package"
      
  }
- stage ('pipelinescriptwithbuildparameter')
+ stage ('triggerdownstreamjob')
  {
- build job:'pipelinescriptwithbuildparameter'
+ build job: 'Pipeline pipelinescriptwithbuildwithparameters'
  }
  stage ('executesonarreport')
  {
