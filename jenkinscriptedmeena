@@ -18,7 +18,7 @@ SendSlackNotification('STARTED')
  }
  stage ('triggerdownstreamjob')
  {
- build job: 'Pipeline pipelinescriptwithbuildwithparameters'
+ build job: 'pipelinescriptwithbuildwithparameters'
  }
  stage ('executesonarreport')
  {
