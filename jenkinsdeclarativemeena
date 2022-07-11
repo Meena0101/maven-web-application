@@ -1,0 +1,93 @@
+pipeline 
+{
+    agent any
+    tools{
+        maven "maven3.8.6"
+    }
+    triggers {
+  pollSCM '* * * * *'
+}
+options {
+    //discard old build
+  buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
+ //adding timestamp to the console output
+  timestamps()
+}
+
+stages{
+    stage('checkoutcodestage')
+    {
+steps
+{
+    SendSlackNotification ('STARTED')
+    
+    git branch: 'development', credentialsId: 'fa10ee94-7171-4dd3-a74a-53316fb746fd', url: 'https://github.com/Meena0101/maven-web-application.git'
+}
+    }
+    stage('build')
+    {
+        steps{
+            sh"mvn clean package" 
+        }
+    }
+    stage('executesonarqubereport')
+    {
+        steps{
+            sh"mvn sonar:sonar"
+        }
+    }
+    stage('uploadartifactsintonexus')
+    {
+        steps{
+            sh"mvn deploy"
+        }
+    }
+    stage('deploy')
+    {
+        steps{
+            sshagent(['d6f6b894-af19-499e-9837-408b0c185c7d']) {
+
+ sh"scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@52.66.198.164:/opt/apache-tomcat-9.0.64/webapps/"
+     }
+         
+     }
+    }
+}// stages closing 
+post {
+  success {
+      SendSlackNotification('SUCCESS')
+    // One or more steps need to be included within each condition's block.
+  }
+  failure {
+      SendSlackNotification('FAILURE')
+    // One or more steps need to be included within each condition's block.
+  }
+}
+
+}//end of pipeline
+     def SendSlackNotification (String buildStatus = 'STARTED')
+     {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESS'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESS') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary,channel: 'myntra')
+}
