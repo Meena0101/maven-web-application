@@ -20,7 +20,7 @@ SendSlackNotification('STARTED')
  {
  build job: 'pipelinescriptwithbuildwithparameters'
  }
- stage ('executesonarreport')
+/* stage ('executesonarreport')
  {
      sh"${MavenHome}/bin/mvn sonar:sonar"
  }
@@ -35,7 +35,7 @@ SendSlackNotification('STARTED')
 
  sh"scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@52.66.198.164:/opt/apache-tomcat-9.0.64/webapps/"
      }
-      }   
+      }  */ 
      }
 catch(e){
 currentBuild.result="FAILED"
