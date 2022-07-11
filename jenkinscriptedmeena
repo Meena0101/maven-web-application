@@ -1,4 +1,4 @@
-node
+node('nodes')
 {
     def MavenHome = tool name:"maven3.8.6"
     properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
@@ -31,7 +31,7 @@ SendSlackNotification('STARTED')
 
  sh"scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@52.66.198.164:/opt/apache-tomcat-9.0.64/webapps/"
      }
-         
+      }   
      }
 catch(e){
 currentBuild.result="FAILED"
@@ -41,9 +41,9 @@ finally{
 SendSlackNotification (currentBuild.result)
 }
 }
-def notifyBuild(String buildStatus = 'STARTED') {
+def SendSlackNotification (String buildStatus = 'STARTED') {
   // build status of null means successful
-  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+  buildStatus =  buildStatus ?: 'SUCCESS'
 
   // Default values
   def colorName = 'RED'
@@ -55,7 +55,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
   if (buildStatus == 'STARTED') {
     color = 'YELLOW'
     colorCode = '#FFFF00'
-  } else if (buildStatus == 'SUCCESSFUL') {
+  } else if (buildStatus == 'SUCCESS') {
     color = 'GREEN'
     colorCode = '#00FF00'
   } else {
@@ -64,5 +64,5 @@ def notifyBuild(String buildStatus = 'STARTED') {
   }
 
   // Send notifications
-  slackSend (color: colorCode, message: summary)
+  slackSend (color: colorCode, message: summary,channel: 'myntra')
 }
