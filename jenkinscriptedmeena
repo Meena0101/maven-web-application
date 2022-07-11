@@ -1,4 +1,5 @@
 node
+try{
 {
     def MavenHome = tool name:"maven3.8.6"
     properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
@@ -31,5 +32,11 @@ node
      }
          
      }
-
+catch(e){
+currentBuild.result="FAILED"
+throw e
+}
+finally{
+SendSlackNotification (currentBuild.result)
+}
 }
